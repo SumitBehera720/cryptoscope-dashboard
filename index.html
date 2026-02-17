@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>CryptoScope Pro — Ultimate Dashboard</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='url(%23g)'/%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%237c5cfc'/%3E%3Cstop offset='1' stop-color='%2300d4aa'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect x='10' y='38' width='7' height='14' rx='2' fill='%23ff4d6d'/%3E%3Crect x='21' y='26' width='7' height='26' rx='2' fill='%23ff4d6d'/%3E%3Crect x='32' y='30' width='7' height='22' rx='2' fill='%2300d4aa'/%3E%3Crect x='43' y='16' width='7' height='36' rx='2' fill='%2300d4aa'/%3E%3Cline x1='13' y1='36' x2='13' y2='52' stroke='%23ff4d6d' stroke-width='1.5'/%3E%3Cline x1='24' y1='22' x2='24' y2='52' stroke='%23ff4d6d' stroke-width='1.5'/%3E%3Cline x1='35' y1='26' x2='35' y2='52' stroke='%2300d4aa' stroke-width='1.5'/%3E%3Cline x1='46' y1='12' x2='46' y2='52' stroke='%2300d4aa' stroke-width='1.5'/%3E%3C/svg%3E"/>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="styles.css"/>
+</head>
+<body>
+
+<!-- ── Demo Banner ── -->
+<div class="demo-banner" id="demo-banner">
+  ⚠️ Simulated data — not real market prices.
+  <span id="api-status-pill" class="api-status demo"><span class="api-dot"></span>DEMO MODE</span>
+  Real API requires a free CoinGecko key.
+</div>
+
+<div class="wrapper">
+
+  <!-- ── Header ── -->
+  <header>
+    <div class="logo" role="banner">
+      <div class="logo-icon" aria-hidden="true">📡</div>
+      <div>
+        <div class="logo-text">Crypto<span>Scope</span></div>
+        <div class="logo-badge">PRO · ULTIMATE DASHBOARD</div>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="live-pill" role="status" aria-live="polite"><div class="live-dot" aria-hidden="true"></div>LIVE</div>
+      <div id="last-update" aria-live="polite">Initializing...</div>
+      <button class="icon-btn" id="alert-bell" aria-label="View alerts">🔔<span class="alert-badge" id="alert-count" style="display:none">0</span></button>
+      <button class="icon-btn" id="theme-btn" aria-label="Toggle theme">🌙</button>
+    </div>
+  </header>
+
+  <!-- ── Nav Tabs ── -->
+  <nav aria-label="Dashboard sections">
+    <div class="nav-tabs" role="tablist">
+      <button class="nav-tab active" data-tab="market"    role="tab" aria-selected="true">📊 Market</button>
+      <button class="nav-tab"        data-tab="explore"   role="tab" aria-selected="false">🌐 Explore</button>
+      <button class="nav-tab"        data-tab="portfolio" role="tab" aria-selected="false">💼 Portfolio</button>
+      <button class="nav-tab"        data-tab="watchlist" role="tab" aria-selected="false">⭐ Watchlist</button>
+      <button class="nav-tab"        data-tab="alerts"    role="tab" aria-selected="false">🔔 Alerts</button>
+    </div>
+  </nav>
+
+  <!-- ══════════════════════════════════════
+       TAB 1 — MARKET
+  ══════════════════════════════════════ -->
+  <div class="tab-content active" id="tab-market" role="tabpanel">
+
+    <div class="controls">
+      <div class="search-wrap">
+        <span class="search-icon" aria-hidden="true">🔍</span>
+        <input type="text" id="search-input" placeholder="Search coins... (press /)"/>
+        <button class="search-clear" id="search-clear">✕</button>
+      </div>
+      <div class="time-btns" role="group" aria-label="Time range">
+        <button class="t-btn active" data-days="1">24H</button>
+        <button class="t-btn"        data-days="7">7D</button>
+        <button class="t-btn"        data-days="30">30D</button>
+      </div>
+      <button class="btn btn-outline" id="export-btn">⬇ CSV</button>
+    </div>
+
+    <div class="metrics-grid" id="metrics-grid"></div>
+
+    <div class="main-grid">
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Price Chart</div>
+            <div class="card-sub" id="chart-subtitle">Bitcoin · 24H</div>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+            <div id="coin-tags" style="display:flex;gap:5px;flex-wrap:wrap"></div>
+            <div class="chart-type-btns">
+              <button class="ct-btn active" data-type="line">Line</button>
+              <button class="ct-btn"        data-type="bar">Bar</button>
+            </div>
+          </div>
+        </div>
+        <div class="chart-wrap"><canvas id="price-chart"></canvas></div>
+      </div>
+
+      <div class="card" style="display:flex;flex-direction:column">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Top Coins</div>
+            <div class="card-sub">click for details · ⭐ to watch</div>
+          </div>
+        </div>
+        <div class="coin-list" id="coin-list" role="list"></div>
+      </div>
+    </div>
+
+    <div class="bottom-grid">
+      <div class="card">
+        <div class="card-header"><div><div class="card-title">Market Heatmap</div><div class="card-sub">24H performance</div></div></div>
+        <div class="heatmap-grid" id="heatmap"></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><div><div class="card-title">Market Share</div><div class="card-sub">top 5 by cap</div></div></div>
+        <div class="dist-wrap">
+          <div class="dist-canvas-wrap"><canvas id="dist-chart"></canvas></div>
+          <div class="dist-legend" id="dist-legend"></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header"><div><div class="card-title">Converter</div><div class="card-sub">instant calculation</div></div></div>
+        <div class="conv-row">
+          <input type="number" id="conv-amount" value="1" min="0" step="any" style="max-width:100px"/>
+          <select id="conv-from" class="conv-select"></select>
+          <span class="conv-arrow">→</span>
+          <select id="conv-to" class="conv-select">
+            <option value="USD">USD</option><option value="EUR">EUR</option>
+            <option value="GBP">GBP</option><option value="JPY">JPY</option>
+            <option value="INR">INR</option>
+          </select>
+        </div>
+        <div class="conv-result" aria-live="polite">
+          <div class="conv-result-value" id="conv-result">—</div>
+          <div class="conv-result-label" id="conv-label">Enter amount above</div>
+        </div>
+        <div style="margin-top:16px">
+          <div class="card-sub" style="margin-bottom:8px">Top Movers</div>
+          <table style="width:100%;border-collapse:collapse;font-family:'Space Mono',monospace;font-size:11px" id="movers-table"></table>
+        </div>
+      </div>
+    </div>
+
+    <div class="shortcuts">
+      <div class="shortcut-item"><span class="kbd">/</span> Search</div>
+      <div class="shortcut-item"><span class="kbd">1-9</span> Select coin</div>
+      <div class="shortcut-item"><span class="kbd">D W M</span> Time range</div>
+      <div class="shortcut-item"><span class="kbd">L B</span> Chart type</div>
+      <div class="shortcut-item"><span class="kbd">T</span> Theme</div>
+      <div class="shortcut-item"><span class="kbd">Esc</span> Close/Clear</div>
+    </div>
+  </div><!-- /tab-market -->
+
+  <!-- ══════════════════════════════════════
+       TAB 2 — EXPLORE
+  ══════════════════════════════════════ -->
+  <div class="tab-content" id="tab-explore" role="tabpanel">
+
+    <div class="explore-top-grid">
+
+      <!-- Fear & Greed Index -->
+      <div class="card">
+        <div class="card-header">
+          <div><div class="card-title">Fear &amp; Greed Index</div><div class="card-sub">market sentiment</div></div>
+          <div id="fng-updated" style="font-size:10px;color:var(--muted);font-family:'Space Mono',monospace"></div>
+        </div>
+        <div class="fng-body">
+          <div class="fng-gauge-wrap">
+            <canvas id="fng-gauge" width="220" height="130"></canvas>
+            <div class="fng-score-overlay">
+              <div class="fng-score" id="fng-score">—</div>
+              <div class="fng-label" id="fng-label">Loading...</div>
+            </div>
+          </div>
+          <div class="fng-history" id="fng-history"></div>
+        </div>
+      </div>
+
+      <!-- Global Market Stats -->
+      <div class="card">
+        <div class="card-header"><div><div class="card-title">Global Market</div><div class="card-sub">real-time overview</div></div></div>
+        <div id="global-stats">
+          <div class="skeleton" style="height:28px;border-radius:6px;margin-bottom:10px"></div>
+          <div class="skeleton" style="height:28px;border-radius:6px;margin-bottom:10px"></div>
+          <div class="skeleton" style="height:28px;border-radius:6px;margin-bottom:10px"></div>
+          <div class="skeleton" style="height:28px;border-radius:6px"></div>
+        </div>
+      </div>
+
+      <!-- Trending -->
+      <div class="card">
+        <div class="card-header"><div><div class="card-title">🔥 Trending</div><div class="card-sub">top searches on CoinGecko</div></div></div>
+        <div id="trending-list">
+          <div class="skeleton" style="height:40px;border-radius:8px;margin-bottom:8px"></div>
+          <div class="skeleton" style="height:40px;border-radius:8px;margin-bottom:8px"></div>
+          <div class="skeleton" style="height:40px;border-radius:8px"></div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- News Feed -->
+    <div class="card" style="margin-top:18px">
+      <div class="card-header">
+        <div><div class="card-title">📰 Crypto News</div><div class="card-sub">latest headlines from across the web</div></div>
+        <button class="btn btn-outline" id="news-refresh" style="font-size:11px;padding:6px 12px">↻ Refresh</button>
+      </div>
+      <div id="news-grid" class="news-grid">
+        <div class="skeleton" style="height:120px;border-radius:12px"></div>
+        <div class="skeleton" style="height:120px;border-radius:12px"></div>
+        <div class="skeleton" style="height:120px;border-radius:12px"></div>
+        <div class="skeleton" style="height:120px;border-radius:12px"></div>
+        <div class="skeleton" style="height:120px;border-radius:12px"></div>
+        <div class="skeleton" style="height:120px;border-radius:12px"></div>
+      </div>
+    </div>
+
+  </div><!-- /tab-explore -->
+
+  <!-- ══════════════════════════════════════
+       TAB 3 — PORTFOLIO
+  ══════════════════════════════════════ -->
+  <div class="tab-content" id="tab-portfolio" role="tabpanel">
+    <div class="portfolio-summary" id="portfolio-summary"></div>
+    <div class="portfolio-grid">
+      <div class="card">
+        <div class="card-header"><div><div class="card-title">Add Holding</div><div class="card-sub">track your crypto</div></div></div>
+        <div class="add-holding-form">
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="p-coin">Coin</label>
+              <select id="p-coin"></select>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="p-amount">Amount</label>
+              <input type="number" id="p-amount" placeholder="0.5" min="0" step="any"/>
+              <div class="field-hint" id="p-amount-hint"></div>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="p-buy">Buy Price (USD)</label>
+              <input type="number" id="p-buy" placeholder="optional" min="0" step="any"/>
+              <div class="field-hint" id="p-buy-hint"></div>
+            </div>
+          </div>
+          <button class="btn btn-primary" id="p-add-btn" style="width:100%">＋ Add Holding</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <div><div class="card-title">My Holdings</div><div class="card-sub" id="holdings-count">No holdings yet</div></div>
+          <button class="btn btn-outline" id="p-clear-btn" style="font-size:11px;padding:6px 10px">Clear All</button>
+        </div>
+        <div class="holdings-list" id="holdings-list" role="list"></div>
+      </div>
+    </div>
+    <div class="card" style="margin-top:0">
+      <div class="card-header"><div><div class="card-title">Portfolio Allocation</div><div class="card-sub">by value</div></div></div>
+      <div style="display:flex;align-items:center;gap:24px;flex-wrap:wrap;margin-top:8px">
+        <div style="width:200px;height:200px;flex-shrink:0"><canvas id="portfolio-chart"></canvas></div>
+        <div id="portfolio-legend" style="display:flex;flex-direction:column;gap:8px"></div>
+      </div>
+    </div>
+  </div><!-- /tab-portfolio -->
+
+  <!-- ══════════════════════════════════════
+       TAB 4 — WATCHLIST
+  ══════════════════════════════════════ -->
+  <div class="tab-content" id="tab-watchlist" role="tabpanel">
+    <div class="watchlist-grid" id="watchlist-grid"></div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       TAB 5 — ALERTS
+  ══════════════════════════════════════ -->
+  <div class="tab-content" id="tab-alerts" role="tabpanel">
+    <div class="card" style="margin-bottom:18px">
+      <div class="card-header"><div><div class="card-title">Create Price Alert</div><div class="card-sub">get notified when price is crossed</div></div></div>
+      <div class="alerts-form">
+        <div class="form-group">
+          <label class="form-label" for="a-coin">Coin</label>
+          <select id="a-coin"></select>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="a-cond">Condition</label>
+          <select id="a-cond">
+            <option value="above">Price goes above</option>
+            <option value="below">Price goes below</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="a-price">Target Price (USD)</label>
+          <input type="number" id="a-price" placeholder="e.g. 70000" min="0" step="any"/>
+          <div class="field-hint" id="a-price-hint"></div>
+        </div>
+        <button class="btn btn-primary" id="a-add-btn">＋ Add Alert</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <div><div class="card-title">Active Alerts</div><div class="card-sub" id="alerts-count">No alerts set</div></div>
+        <button class="btn btn-outline" id="a-clear-btn" style="font-size:11px;padding:6px 10px">Clear All</button>
+      </div>
+      <div class="alerts-list" id="alerts-list" role="list"></div>
+    </div>
+  </div><!-- /tab-alerts -->
+
+</div><!-- /wrapper -->
+
+<!-- ════════════════════════════════════════════════
+     COIN DETAIL MODAL
+════════════════════════════════════════════════ -->
+<div id="coin-modal" class="modal-backdrop" role="dialog" aria-modal="true" style="display:none">
+  <div class="modal-box" id="coin-modal-box">
+    <button class="modal-close" id="modal-close" aria-label="Close modal">✕</button>
+    <div id="modal-content"></div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
